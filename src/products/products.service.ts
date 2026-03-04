@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { validate as isUUID } from 'uuid';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -43,9 +44,16 @@ export class ProductsService {
     return products;
   }
 
-  async findOne(id: string) {
-    const product = await this.productsRepository.findOneBy({ id });
-    if (!product) throw new NotFoundException(`Product with id ${id} not found`);
+  async findOne(term: string) {
+    let product: Product | null;
+
+    if (isUUID(term)) {
+      product = await this.productsRepository.findOneBy({ id: term });
+    } else {
+      product = await this.productsRepository.findOneBy({ slug: term });
+    }
+
+    if (!product) throw new NotFoundException(`Product with term ${term} not found`);
 
     return product;
   }
