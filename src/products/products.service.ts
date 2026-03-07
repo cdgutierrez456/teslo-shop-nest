@@ -8,6 +8,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 
 import { Product } from './entities/product.entity';
 import { PaginationDto } from '../common/dtos/pagination.dto';
+import { ProductImage } from './entities/product-image.entity';
 
 @Injectable()
 export class ProductsService {
@@ -16,13 +17,19 @@ export class ProductsService {
 
   constructor(
     @InjectRepository(Product)
-    private readonly productsRepository: Repository<Product>
+    private readonly productsRepository: Repository<Product>,
+
+    @InjectRepository(ProductImage)
+    private readonly productImagesRepository: Repository<ProductImage>,
   ) {}
 
   async create(createProductDto: CreateProductDto) {
     try {
-
-      const product = this.productsRepository.create(createProductDto);
+      const { images = [], ...productDetails } = createProductDto
+      const product = this.productsRepository.create({
+        ...productDetails,
+        images: images.map((image) => this.productImagesRepository.create({ url: image }))
+      });
       // Impacto en la base de datos
       await this.productsRepository.save(product);
       return product;
@@ -66,7 +73,8 @@ export class ProductsService {
   async update(id: string, updateProductDto: UpdateProductDto) {
     const product = await this.productsRepository.preload({
       id: id,
-      ...updateProductDto
+      ...updateProductDto,
+      images: []
     })
 
     if (!product)
