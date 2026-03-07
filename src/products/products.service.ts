@@ -32,7 +32,7 @@ export class ProductsService {
       });
       // Impacto en la base de datos
       await this.productsRepository.save(product);
-      return product;
+      return { ...product, images };
 
     } catch (error) {
       this.handleDBExections(error);
@@ -46,9 +46,14 @@ export class ProductsService {
     const products = await this.productsRepository.find({
       take: limit,
       skip: offset,
-
+      relations: {
+        images: true
+      }
     })
-    return products;
+    return products.map(product => ({
+      ...product,
+      images: product.images?.map(image => image.url)
+    }));
   }
 
   async findOne(term: string) {
@@ -57,17 +62,27 @@ export class ProductsService {
     if (isUUID(term)) {
       product = await this.productsRepository.findOneBy({ id: term });
     } else {
-      const queryBuilder = this.productsRepository.createQueryBuilder();
+      const queryBuilder = this.productsRepository.createQueryBuilder('prod');
       product = await queryBuilder
         .where(`UPPER(title) =:title or slug =:slug`, {
           title: term.toUpperCase(),
           slug: term
-        }).getOne()
+        })
+        .leftJoinAndSelect('prod.images', 'prodImages')
+        .getOne()
     }
 
     if (!product) throw new NotFoundException(`Product with term ${term} not found`);
 
     return product;
+  }
+
+  async findOnePlain(term: string) {
+    const { images = [], ...rest } = await this.findOne(term)
+    return {
+      ...rest,
+      images: images.map(img => img.url)
+    }
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
