@@ -7,12 +7,14 @@ import { fileFilter } from './helpers/fileFilter.helper';
 import { fileNamer } from './helpers/fileNamer.helper';
 
 import { FilesService } from './files.service';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('files')
 export class FilesController {
 
   constructor(
-    private readonly filesService: FilesService
+    private readonly filesService: FilesService,
+    private readonly configService: ConfigService
   ) {}
 
   @Get('product/:imageName')
@@ -39,10 +41,10 @@ export class FilesController {
 
     if (!file) throw new BadRequestException('Make sure that the file is an image')
 
-    const secureUrl = `${file.filename}`
+    const secureUrl = `${this.configService.get('HOST_API')}/files/product/${file.filename}`
 
     return {
-      fileName: file.originalname
+      fileName: secureUrl
     };
   }
 
