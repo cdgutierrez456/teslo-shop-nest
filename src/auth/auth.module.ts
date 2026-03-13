@@ -27,12 +27,6 @@ import { User } from './entities/user.entity';
         }
       }
     })
-    // JwtModule.register({
-    //   secret: '',
-    //   signOptions: {
-    //     expiresIn: '2h'
-    //   }
-    // })
   ],
   exports: [
     TypeOrmModule
