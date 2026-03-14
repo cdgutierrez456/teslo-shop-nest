@@ -33,7 +33,7 @@ export class AuthService {
 
       return {
         ...userWithoutPassword,
-        token: this.getJwtToken({ email: user.email })
+        token: this.getJwtToken({ id: user.id })
       };
 
     } catch (error) {
@@ -45,7 +45,7 @@ export class AuthService {
     const { password, email } = loginUserDto
     const user = await this.userRepository.findOne({
       where: { email },
-      select: { email: true, password: true }
+      select: { email: true, password: true, id: true }
     })
 
     if (
@@ -56,7 +56,7 @@ export class AuthService {
 
     return {
       ...user,
-      token: this.getJwtToken({ email: user.email })
+      token: this.getJwtToken({ id: user.id })
     };
   }
 
