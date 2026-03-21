@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { ProductsService } from './products.service';
 import { ProductsController } from './products.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { AuthModule } from '../auth/auth.module';
 
 import { Product } from './entities/product.entity';
 import { ProductImage } from './entities/product-image.entity';
@@ -11,7 +14,8 @@ import { ProductImage } from './entities/product-image.entity';
   providers: [ProductsService],
   exports: [ProductsService, TypeOrmModule],
   imports: [
-    TypeOrmModule.forFeature([Product, ProductImage])
+    TypeOrmModule.forFeature([Product, ProductImage]),
+    AuthModule
   ]
 })
 export class ProductsModule {}
