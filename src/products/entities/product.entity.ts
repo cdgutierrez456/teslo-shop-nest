@@ -9,15 +9,15 @@ export class Product {
 
   @ApiProperty({
     example: '94f05e2a-32c4-4942-8c6f-9049d3870c2e',
-    description: 'Product ID',
+    description: 'Product unique identifier (UUID)',
     uniqueItems: true
   })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @ApiProperty({
-    example: '94f05e2a-32c4-4942-8c6f-9049d3870c2e',
-    description: 'Product ID',
+    example: 'T-Shirt Teslo',
+    description: 'Product title',
     uniqueItems: true
   })
   @Column('text', {
@@ -26,9 +26,9 @@ export class Product {
   title: string;
 
   @ApiProperty({
-    example: '94f05e2a-32c4-4942-8c6f-9049d3870c2e',
-    description: 'Product ID',
-    uniqueItems: true
+    example: 29.99,
+    description: 'Product price',
+    default: 0
   })
   @Column('float', {
     default: 0
@@ -36,9 +36,9 @@ export class Product {
   price: number;
 
   @ApiProperty({
-    example: '94f05e2a-32c4-4942-8c6f-9049d3870c2e',
-    description: 'Product ID',
-    uniqueItems: true
+    example: 'Classic cotton t-shirt',
+    description: 'Product description',
+    nullable: true
   })
   @Column('text', {
     nullable: true
@@ -46,8 +46,8 @@ export class Product {
   description: string;
 
   @ApiProperty({
-    example: '94f05e2a-32c4-4942-8c6f-9049d3870c2e',
-    description: 'Product ID',
+    example: 't_shirt_teslo',
+    description: 'SEO-friendly URL slug',
     uniqueItems: true
   })
   @Column('text', {
@@ -56,9 +56,9 @@ export class Product {
   slug: string;
 
   @ApiProperty({
-    example: '20',
-    description: 'Stock Quantity',
-    uniqueItems: true
+    example: 10,
+    description: 'Units available in stock',
+    default: 0
   })
   @Column('int', {
     default: 0
@@ -66,9 +66,8 @@ export class Product {
   stock: number;
 
   @ApiProperty({
-    example: '["S","M"]',
-    description: 'Product ID',
-    uniqueItems: true
+    example: ['S', 'M', 'L', 'XL'],
+    description: 'Available sizes'
   })
   @Column('text', {
     array: true,
@@ -76,17 +75,17 @@ export class Product {
   sizes: string[];
 
   @ApiProperty({
-    example: 'men/women',
-    description: 'Gender',
-    uniqueItems: true
+    example: 'men',
+    description: 'Target gender',
+    enum: ['men', 'women', 'kid', 'unisex']
   })
   @Column('text')
   gender: string;
 
   @ApiProperty({
-    example: '["shirt", "jacket"]',
+    example: ['shirt', 'cotton'],
     description: 'Product tags',
-    uniqueItems: true
+    default: []
   })
   @Column('text', {
     array: true,
@@ -95,9 +94,8 @@ export class Product {
   tags: string[];
 
   @ApiProperty({
-    example: '["1740176-00-A_0_2000.jpg","1740176-00-A_1.jpg"]',
-    description: 'Image IDs',
-    uniqueItems: true
+    example: ['1740176-00-A_0_2000.jpg', '1740176-00-A_1.jpg'],
+    description: 'Product image filenames'
   })
   @OneToMany(
     () => ProductImage,
